@@ -25,7 +25,6 @@ if uploaded_file is not None:
     df['Task Description'] = df['Task Description'].astype(str)
     df['Resource'] = df['Resource'].astype(str)
 # Get Input Numbers for Line Balancing and Simulation
-# Lấy số liệu cân bằng và mô phỏng
 
 input_data = pd.read_excel(uploaded_file, sheet_name='Input_Data_5',skiprows=3,usecols='B:C')
 cycle_time = input_data[input_data['Particulars'] == 'Cycle Time (Max of Takt Time Vs Bottleneck)']['Input'].tolist()[0]
@@ -93,23 +92,18 @@ import mplcursors
 # Global Variables
 
 # Import the Line Details from Base File and Create Base Data
-# Nhập dữ liệu cơ sở và tạo dữ liệu cơ sở
 file_path = r'Line Balancing.xlsm'
 
 # For Capturing the Production During Simulation
-# Bắt giữ các sản phẩm trong quá trình mô phỏng
 throughput = 0
 
 # Que as Raw Material in Production
-# Que là nguyên liệu thô trong sản xuất
 Que = namedtuple('Que','RM_id, Task, Task_Time, End_Time, Next_Task')
 
 # List of All Global Variables
-# Danh sách các biến số toàn cầu
 production = globals()
 
 # Get Color List for Network
-# Lấy danh sách các màu cho mạng
 node_colors = pd.read_excel(uploaded_file, sheet_name='Colors',usecols='A,C')
 node_colors = node_colors['Hex'].to_dict()
 
@@ -119,7 +113,6 @@ node_colors = node_colors['Hex'].to_dict()
 
 
 # Functions for Line Balancing
-# Hàm cân bằng
 
 def import_data(file_path):
     df = pd.read_excel(file_path,sheet_name='hat5',skiprows=3,usecols='B:G')
@@ -141,7 +134,6 @@ def import_data(file_path):
     temp = temp.append(last)
 
     # Create the Final Data for drawing precedence graph
-    # Tạo dữ liệu cuối cùng cho biểu đồ thứ bậc
     
     final_df = temp.merge(df[['Task Number','Task Description','Resource','ST (Minutes)']],on='Task Number',how='left')
     final_df = final_df[['Task Number','Task Description', 'Resource','ST (Minutes)','Next Task']]
@@ -160,7 +152,6 @@ def import_data(file_path):
 
 
 # Function to Create Precedence Graph and Create Precedence Graph for Visualizing the Line
-# Tạo đồ thị để hình dung
 
 def precedence_graph(data_set):
     g = nx.DiGraph()
@@ -187,7 +178,6 @@ def precedence_graph(data_set):
 
 ##=======================================
 # Create Data Table for Line Balancing, Workstations And Allocation
-# Tạo dữ liệu cho cân bằng dòng, các trạm và phân bổ
 ##=======================================
 
 
@@ -205,7 +195,6 @@ def create_LB_Table(data_set,g):
     line_balance.sort_values(by=['Number of Following Task'],ascending=False,inplace=True)    
 
     # Arrange the Data and return the final table
-    # Sắp xếp dữ liệu và trả lại bảng cuối cùng
 
     final = pd.merge(line_balance,data_set[['Task Number','Task Description','Resource','ST (Minutes)','Next Task']],on='Task Number',how='left')
     final = final.drop_duplicates()
@@ -223,7 +212,6 @@ def create_LB_Table(data_set,g):
 
 ##=======================================
 # Create Function for Workstation Allocation based on Largest Following Task Hueristic Algorithm
-# Tạo hàm phân bổ trạm máy bằng thuật toán Largest Following Task Hueristic
 ##=======================================
 
 
@@ -286,7 +274,6 @@ def find_feasable_allocation(base_data, allocation_table, cycle_time, workstatio
                 allocation_table.iloc[i,4] = 0
     
     #reassign the starting workstations from 1 to respective workstations
-    # Phân bổ các máy trạm từ 1 đến máy trạm tương ứng
     reassign = allocation_table[allocation_table['Task Description'] == 'START']['Task Number'].tolist()
 
 
@@ -303,7 +290,6 @@ def find_feasable_allocation(base_data, allocation_table, cycle_time, workstatio
 
 
 # Generate Random Colors for Workstation Mapping
-# Tạo màu ngẫu nhiên cho máy trạm
 
 def rgb2hex(r,g,b):
     return '#%02x%02x%02x' % (r,g,b)
@@ -313,7 +299,6 @@ def rgb2hex(r,g,b):
 
 
 # Function to create the Workstation and Task Data for Simulation from Line Balanced Solution
-# Chức năng tạo máy trạm và nhiệm vụ cho mô phỏng từ cân bằng chuyền
 
 def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
     
@@ -345,7 +330,6 @@ def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, 
         task_list = list(set(temp[temp['Task Description']!= 'START']['Task Number'].tolist()))
 
         # Create Temporary Dictionary
-        # Tạo Dic tạm thời 
         temp_dic_proc = {}
         temp_dic_job = {}
         temp_dic_resource_count = {}
@@ -399,7 +383,6 @@ def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, 
 
 
 # Generate Broad Cast Pipe for Track of Material Flow
-# Tạo đường ống để theo dõi
 
 class BroadcastPipe:
     
@@ -515,7 +498,6 @@ class Workstation:
             resource_number = allocation_counter
             
             # Allocate the resource - ALLOCATED ONE BY ONE BUT SINGLE RESOURCE
-            # Phân bổ tài nguyên resource
             resource_allocated = needed_resources[allocation_counter]
             
             if allocation_counter == available_resources - 1:
@@ -524,7 +506,6 @@ class Workstation:
                 allocation_counter += 1
             
             # Create the Job_Work for the allocated resource
-            # Tạo Job_Work cho resource được phân bổ
 
             job_work = Job(self.env, task, task_time, [resource_allocated],counter, request_time, accquired_time, 
                           resource_number)
@@ -613,7 +594,6 @@ class Workstation:
 
 
 # Create a Job Class for Processing Jobs
-# Tạo lớp công việc để xử lý công việc
 
 class Job:
     def __init__(self, env, task, task_time, resources, counter, request_time, accquired_time, resource_number):
@@ -692,7 +672,6 @@ class Job:
 
 
 # Create Simulation Visualization of various metrics during simulation
-# Tạo trực quan mô phỏng các chỉ số khác nhau trong mô phỏng
 def plot_simulation(env, unique_tasks, feasable_solution):
     while True:
         tasks = []
@@ -747,7 +726,6 @@ def plot_simulation(env, unique_tasks, feasable_solution):
 
 
 # Create the Main Assembly Line Class Environment for Simulation
-# Tạo môi trường tự động 
 
 class g:
     warmup_time = 5
