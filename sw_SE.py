@@ -6,53 +6,88 @@ import matplotlib.pyplot as plt
 from torch import layout
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+from PIL import Image
 
 
-st.set_page_config(page_title="Sales Dashboard", page_icon=":bar_chart:" , layout="wide")
+st.set_page_config(page_title="Line balance TTD", page_icon=":bar_chart:" , layout="wide")
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
-st.title("Import Data")
+def center_image(name):
+    col1, col2, col3 = st.columns([5,8,4])
+    with col1:
+        st.write("")
+
+    with col2:
+        st.image(name)
+
+    with col3:
+        st.write("")
+
+
+st.markdown("<h1 style='text-align: center; color: black;'>Line Balance Tan Thanh Dat Co. ltd</h1>", unsafe_allow_html=True)
+
+st.markdown('##')
+
+center_image('ttd.png')
+st.markdown('##')
+
+st.title("Input data")
+
 
 #Add the sidebar
 
 uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                 , type = ['csv' , 'xlsx' , 'xlsm'])
 
-global df 
-if uploaded_file is not None: 
-    df = pd.read_excel(uploaded_file, sheet_name='hat5',skiprows=3,usecols='B:G' , nrows= 100)
-    df['Precedence'] = df['Precedence'].astype(str)
-    df['Task Description'] = df['Task Description'].astype(str)
-    df['Resource'] = df['Resource'].astype(str)
-# Get Input Numbers for Line Balancing and Simulation
+input_data = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:F')
+cycle_time = max(input_data['ST (Minutes)'])
+workstations = (input_data['ST (Minutes)']).count()
 
-input_data = pd.read_excel(uploaded_file, sheet_name='Input_Data_5',skiprows=3,usecols='B:C')
-cycle_time = input_data[input_data['Particulars'] == 'Cycle Time (Max of Takt Time Vs Bottleneck)']['Input'].tolist()[0]
-workstations = input_data[input_data['Particulars'] == 'Max Number of Workstations']['Input'].tolist()[0]
-takt_time = input_data[input_data['Particulars'] == 'Takt Time Desired in Minutes']['Input'].tolist()[0]
-style_name = input_data[input_data['Particulars'] == 'Style Name']['Input'].tolist()[0]
+placeholder1 = st.empty()
 
-st.title("Data visualization")
-st.table(df)
+with placeholder1.container():
+    # create three columns
+    kpi1, kpi2 , kpi3 = st.columns(3)
 
-# Plot dataframe 
-fig = px.line(df, x ='Task Number' , y ='ST (Minutes)', text = "ST (Minutes)" , title= "Data visualization" , width=1300, height= 800)
-fig.add_scatter(x=df['Task Number'], y= [cycle_time]*len(df['Task Number']) , name = "Cycle time max") 
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig)
+    # fill in those three columns with respective metrics or KPIs 
+    kpi1.metric(label="Cycle time ⏳", value=float(cycle_time))
+    kpi2.metric(label="Workstations 💍", value= int((input_data['ST (Minutes)']).count()))
+    kpi3.metric(label="Sum product in 600 minutes", value= int((600/cycle_time)))
 
 
-# Plot dataframe 
-fig = px.bar(df, x ='Task Description' , y ='ST (Minutes)', width=1300, height= 800)
-fig.update_traces(textposition="auto")
-st.plotly_chart(fig)
+    st.markdown("### Detailed Data View")
+    global df 
+    if uploaded_file is not None: 
+        df = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:G' , nrows= 100)
+        df['Precedence'] = df['Precedence'].astype(str)
+        df['Task Description'] = df['Task Description'].astype(str)
+        df['Resource'] = df['Resource'].astype(str)
+    # Get Input Numbers for Line Balancing and Simulation
 
+    try:
+        st.table(df)
+    except Exception as e:
+        print(e)
+        st.write("Please upload file to the application")
 
-# Plot dataframe 
-# fig = px.line(df, x ='Task Number' , y ='No of Operators', text = "No of Operators" , width=1300, height= 800)
-# fig.update_traces(textposition="bottom right")
+placeholder2 = st.empty()
 
-# st.plotly_chart(fig)
+with placeholder2.container():
+
+    fig_col1, fig_col2 = st.columns(2)
+    with fig_col1:
+        st.markdown("### Line Chart Time Series")
+        fig = px.line(df, x ='Task Number' , y ='ST (Minutes)', text = "ST (Minutes)")
+        fig.add_scatter(x=df['Task Number'], y= [cycle_time]*len(df['Task Number']) , name = 'Cycle time') 
+        fig.update_traces(textposition="bottom right")
+        st.plotly_chart(fig , use_container_width=True)
+
+    with fig_col2:
+        st.markdown("### Bar Chart Time Series")
+        fig = px.bar(df, x ='Task Number' , y ='ST (Minutes)')
+        fig.update_traces(textposition="auto")
+        st.plotly_chart(fig)
+
 
 
 
@@ -115,7 +150,7 @@ node_colors = node_colors['Hex'].to_dict()
 # Functions for Line Balancing
 
 def import_data(file_path):
-    df = pd.read_excel(file_path,sheet_name='hat5',skiprows=3,usecols='B:G')
+    df = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:G')
 
     # Manipulate the Line Details data to split multiple Predecessors to individual rows
     temp = pd.DataFrame(columns=['Task Number', 'Precedence'])
@@ -303,7 +338,7 @@ def rgb2hex(r,g,b):
 def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
     
     workstation_data = dict(tuple(feasable_solution.groupby('Workstation')))
-    base = pd.read_excel(file_path,sheet_name='hat5',skiprows=3,usecols='B:G')
+    base = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:G')
     
     assembly_line = []
     tasks = {}
@@ -744,7 +779,6 @@ class g:
     wip_data = pd.DataFrame(columns=['Process', 'Counter', 'Resource_Number', 'Enter_Time','Exit_Time','Que_Time'])
     
     cycle_data = pd.DataFrame(columns=['Time', 'CT'])
-    takt = takt_time
 
 class Assembly_Line:
     
@@ -756,7 +790,7 @@ class Assembly_Line:
         self.feasable_solution = feasable_solution
         self.Workstation = Workstation
         self.data = data
-        self.file = pd.read_excel(file_path,sheet_name='hat5',skiprows=3,usecols='B:F')
+        self.file = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:F')
         self.unique_task = self.file['Task Number'].tolist()
         self.followers = self.data.groupby(['Next Task'])['Task Number'].count().to_dict()
         
@@ -821,7 +855,7 @@ def get_simulation_time(sim_min):
 def save_graph(data_set,workstation, shades):
     
     fig, ax = plt.subplots(figsize=(17, 7))
-    fig.suptitle('Sewing Line Workstation Allocation', fontsize=20)
+    fig.suptitle('KIDS ULTRA ADVENTURE HAT', fontsize=20)
     
     g = nx.DiGraph()
     
@@ -850,8 +884,9 @@ def save_graph(data_set,workstation, shades):
     
 save_graph(solution,workstations,node_colors)    
 
+# st.markdown('##LINE BALANCE')
+st.markdown("<h1 style='text-align: center; color: red;'>LINE BALANCE</h1>", unsafe_allow_html=True)
 
-from PIL import Image
 
 image = Image.open('Allocated_Ws_hat.png')
 new_image = image.resize((1400, 600))
@@ -863,10 +898,11 @@ for i in range(1 , max(solution['Workstation'])+1):
 wks = np.unique(solution['Workstation']).tolist()
 
 df_new = pd.DataFrame(data = {'Work' : wks , 'SumST': sumindex})
+
+
 # Plot dataframe 
-fig = px.line(df_new , x = 'Work' , y = 'SumST', text = "SumST" , title= "Data visualization" , width=1300, height= 800)
-fig.add_scatter(x= df_new['Work'], y= [cycle_time]*len(df['Task Number']) , name = "Cycle time max") 
-fig.update_traces(textposition="bottom right")
+fig = px.bar(df_new , x = 'Work' , y = 'SumST', text = "SumST" , width=1300, height= 800)
+fig.update_traces(textposition="auto")
 st.plotly_chart(fig)
 
 
@@ -876,10 +912,7 @@ for i in range(1 , max(solution['Workstation'])+1):
 wks = np.unique(solution['Workstation']).tolist()
 
 df_new = pd.DataFrame(data = {'Work' : wks , 'SumST': sumindex})
-# Plot dataframe 
-fig = px.line(df_new , x = 'Work' , y = 'SumST', text = "SumST" , title= "Data visualization" , width=1300, height= 800)
-fig.update_traces(textposition="bottom right")
-st.plotly_chart(fig)
+
 
 
 
@@ -898,7 +931,7 @@ st.plotly_chart(fig)
 
 class ClockAndData:
     def __init__(self, canvas, canvas_1, x1, y1, time, current_production, workstations, subplot_dict_p,
-                 subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, takt_time, 
+                 subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, 
                 ct_achieved):
         self.canvas = canvas
         self.canvas_1 = canvas_1
@@ -915,7 +948,6 @@ class ClockAndData:
         self.allocation = allocation
         self.position = position
         self.ax_graph = ax_graph
-        self.takt_time = takt_time
         self.ct_achieved = ct_achieved
         canvas_1.create_text(self.x1+500, self.y1, font=("Arial Narrow",16, 'bold'), text= "SEW-MULATOR ENGINE by Optimalytics Business Solutions",anchor=tk.NW, fill='white')
         
@@ -927,11 +959,8 @@ class ClockAndData:
                                        text = "Simulation Time : " + str(get_simulation_time(round(time, 1))), anchor = tk.NW,fill='#6C3400')
         
         
-        self.canvas.delete(self.takt_time)
         x2_start = x1_start + 400
-        self.takt_time = canvas.create_text(x2_start, self.y1, font=("Arial Narrow",14,'bold'), 
-                                            text = "Desired Cycle Time : " + str(round(g.takt,2)), anchor = tk.NW,fill='#6C3400')
-        
+
         self.canvas.delete(self.ct_achieved)
         x3_start = x2_start + 400
         achieved = round(g.cycle_data['CT'].mean(),2)
@@ -1136,7 +1165,6 @@ prec_f = plt.figure()
 prec_gs = GridSpec(1,1,figure=prec_f)
 prec_ax = plt.subplot(prec_gs.new_subplotspec((0,0)))
 prec_gs.update(left=0.02,right=0.98,top=0.9,bottom=0.1,wspace=0.2,hspace=0.01)
-prec_f.suptitle('Process Flow Diagram of '+ style_name, fontsize=20)
 prec_plot = FigureCanvasTkAgg(prec_f, master=main)
 prec_plot.get_tk_widget().config(width= main.winfo_screenwidth(),height = main.winfo_screenheight()*.5)
 prec_plot.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -1255,7 +1283,7 @@ data_plot_3.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     
     
 clock = ClockAndData(canvas, company_name, (main.winfo_screenwidth()*.05)/2, (main.winfo_screenheight()*.05)/2, 0, 0, solution_workstations, subplot_dict_p,
-                    subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, takt_time, 0)
+                    subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, 0)
 
 
 # In[ ]:

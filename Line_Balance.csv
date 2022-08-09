@@ -2,39 +2,39 @@ Task Number,Task Description,Resource,Number of Following Task,ST (Minutes),Work
 S_3,START,,18,0.0,1,Yes,8
 8,Ráp phản quang vào lưới phối trái + phải,1 Kim,17,0.52,0,No,9
 S_2,START,,17,0.0,1,Yes,6
-6,Ráp đỉnh trái + Đỉnh phải,1 Kim,16,0.33,0,No,7
+6,Ráp đỉnh trái + Đỉnh phải,1 Kim,16,0.29,0,No,7
 9,Vắt sổ phản quang trái + phải + cắt,Vắt sổ,16,0.26,0,No,10
-10,Diễu phối phản quang 2 bên + cắt,1 Kim,15,0.37,0,No,11
-7,Viền tẻ 2 kim đỉnh + Cắt,2 Kim (2.8),15,0.17,0,No,11
+10,Diễu phối phản quang 2 bên + cắt,1 Kim,15,0.47,0,No,11
+7,Viền tẻ 2 kim đỉnh + Cắt,2 Kim (2.8),15,0.4,0,No,11
 S_5,START,,15,0.0,1,Yes,17
-11,Ráp đỉnh vào hông phối 2 bên,1 Kim,14,0.78,0,No,12
-17,Ráp Band trai + phải vào mặt,1 Kim,14,0.62,0,No,18
-18,Diễu band và mặt  ( 1 kim or 2 kim )x 2,1 Kim,13,0.92,0,No,19
-12,Ráp hông vào phối lưới 2 bên,1 Kim,13,0.78,0,No,13
+11,Ráp đỉnh vào hông phối 2 bên,1 Kim,14,0.67,0,No,12
+17,Ráp Band trai + phải vào mặt,1 Kim,14,0.47,0,No,18
+12,Ráp hông vào phối lưới 2 bên,1 Kim,13,0.6,0,No,13
+18,Diễu band và mặt  ( 1 kim or 2 kim )x 2,1 Kim,13,0.6,0,No,19
 S_1,START,,13,0.0,1,Yes,1
-13,Viền lật 2 kim chóp hông trên x 2,2 Kim (2.2),12,0.7,0,No,14
-19,Đính khóa vào 2 bên nón,1 Kim,12,0.53,0,No,20
-1,Ráp gáy che vào vành,1 Kim,12,0.48,0,No,3
-14,Viền lật 2 kim chóp  hông dưới x2,2 Kim (2.2),11,0.7,0,No,22
-20,Ráp band  vào đuôi nón,1 Kim,11,0.53,0,No,21
-3,Gắn nhãn PL3.2 vào vành,1 Kim,11,0.28,0,No,2
-2,Viền lật gáy che + vành,2 Kim (2.2),10,0.48,0,No,4
+13,Viền lật 2 kim chóp hông trên x 2,2 Kim (2.2),12,0.46,0,No,14
+1,Ráp gáy che vào vành,1 Kim,12,0.39,0,No,3
+19,Đính khóa vào 2 bên nón,1 Kim,12,0.24,0,No,20
+14,Viền lật 2 kim chóp  hông dưới x2,2 Kim (2.2),11,0.54,0,No,22
+20,Ráp band  vào đuôi nón,1 Kim,11,0.51,0,No,21
+3,Gắn nhãn PL3.2 vào vành,1 Kim,11,0.17,0,No,2
+2,Viền lật gáy che + vành,2 Kim (2.2),10,0.29,0,No,4
 21,Diễu đuôi nón 2 bên,1 Kim,10,0.24,0,No,23
 22,Gọt chóp để ráp,Phụ,10,0.24,0,No,23
-23,Tra band vào chóp,1 Kim,9,1.58,0,No,24
-4,Viền 3.6 cm ( bọc vành nón ),Trụ ngang,9,0.52,0,No,5
-24,May dây size vào chóp,1 Kim,8,1.27,0,No,25
-24,May dây size vào chóp,1 Kim,8,1.27,0,No,26
-5,Khóa Viền vành 3.6cm,1 Kim,8,0.63,0,No,25
-5,Khóa Viền vành 3.6cm,1 Kim,8,0.63,0,No,26
+23,Tra band vào chóp,1 Kim,9,0.78,0,No,24
+4,Viền 3.6 cm ( bọc vành nón ),Trụ ngang,9,0.38,0,No,5
+5,Khóa Viền vành 3.6cm,1 Kim,8,0.54,0,No,25
+5,Khóa Viền vành 3.6cm,1 Kim,8,0.54,0,No,26
+24,May dây size vào chóp,1 Kim,8,0.46,0,No,25
+24,May dây size vào chóp,1 Kim,8,0.46,0,No,26
 S_4,START,,7,0.0,1,Yes,15
-25,Tra chóp vào vành,1 Kim,6,0.72,0,No,27
-26,Tra chóp vào vành,1 Kim,6,0.72,0,No,27
-15,Ráp lưới lót,1 Kim,6,0.3,0,No,16
-27,Gắn dây 7mm quai vào nón 2 bên,1 Kim,5,0.65,0,No,28
-16,Viền tẻ lưới lót + cắt,2 Kim (2.8),5,0.18,0,No,28
-28,Tra lót vào vành,Trụ ngang,4,1.33,0,No,29
-29,Diễu chân nón 1.5mm,Trụ ngang,3,0.95,0,No,30
-30,Lượt lót vào Band trên,1 Kim,2,0.65,0,No,31
+25,Tra chóp vào vành,1 Kim,6,0.57,0,No,27
+26,Tra chóp vào vành,1 Kim,6,0.57,0,No,27
+15,Ráp lưới lót,1 Kim,6,0.2,0,No,16
+27,Gắn dây 7mm quai vào nón 2 bên,1 Kim,5,0.37,0,No,28
+16,Viền tẻ lưới lót + cắt,2 Kim (2.8),5,0.16,0,No,28
+28,Tra lót vào vành,Trụ ngang,4,0.7,0,No,29
+29,Diễu chân nón 1.5mm,Trụ ngang,3,0.73,0,No,30
+30,Lượt lót vào Band trên,Trụ ngang,2,0.55,0,No,31
 31,Gắn nhãn vào đuôi nón,1 Kim,1,0.13,0,No,32
-32,Viền lật 2 kim quanh nón,2 Kim,0,1.67,0,No,END
+32,Viền lật 2 kim quanh nón,2 Kim,0,1.1,0,No,END
