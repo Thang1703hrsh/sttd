@@ -14,7 +14,6 @@ import database as db
 st.set_page_config(page_title="Line balance TTD", page_icon=":bar_chart:" , layout="wide")
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
-
 # --- USER AUTHENTICATION ---
 users = db.fetch_all_users()
 
@@ -34,6 +33,7 @@ if authentication_status == None:
     st.warning("Please enter your username and password")
 
 if authentication_status:
+
     # @st.cache
 
     def center_image(name):
@@ -71,7 +71,7 @@ if authentication_status:
         st.sidebar.title("Upload data")
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
-
+        uploaded_file = 'Line Balancing.xlsm'
         input_data = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:F')
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
@@ -90,7 +90,8 @@ if authentication_status:
             <style>
             div[data-testid="metric-container"] {
             background-color: rgba(28, 131, 225, 0.5);
-            border: 1px solid rgba(8, 0, 13, 0.5);
+            border: 1px solid rgba(8, 0, 13, 0.8);
+            padding: 10px 20px 20px 70px;
             padding: 5% 5% 5% 10%;
             border-radius: 30px;
             color: rgb(9, 68, 82);
@@ -314,6 +315,7 @@ if authentication_status:
     ##=======================================
 
 
+        
     def find_feasable_allocation(base_data, allocation_table, cycle_time, workstations):
         
         counter = [0] * workstations
@@ -325,64 +327,84 @@ if authentication_status:
         for i in range(1,workstations + 1):
             stations[i] = 'open'
         
+        count_station = 0
+
+        st.markdown("<h2 style='text-align: center; color: black;'>Input max workstation for balance</h2>", unsafe_allow_html=True)
+        with st.form(key = "Information form"):
+            max_station = st.number_input("Enter max workstation")
+            submission = st.form_submit_button(label= "Submit")
+            if submission == True:
+                st.success("Successfully submitted")
+
+        # i là index, d là data trong mỗi hàng
         for i, d in allocation_table.iterrows():
-            
             if d[1] != 'START':
                 
-                current_task = d[0]
-                current_task_allocated = allocation_table[allocation_table['Task Number']==d[0]].Allocated.tolist()[0]
+                current_task = d[0] #Task hiện hành
+                
+                current_task_allocated = allocation_table[allocation_table['Task Number']==d[0]].Allocated.tolist()[0] #
+
                 current_task_time = base_data[base_data['Task Number']==d[0]]['ST (Minutes)'].tolist()[0]
+                
                 previous_task = base_data[base_data['Next Task']== d[0]]['Task Number'].tolist()
+
                 previous_task_list = []
+                
                 previous_stations_list = []
                 for pt in previous_task:
                     previous_task_list.append(allocation_table[allocation_table['Task Number']==pt].Allocated.tolist()[0])
                     previous_stations_list.append(allocation_table[allocation_table['Task Number']==pt].Workstation.tolist()[0])
 
-                count_allocations = sum(map(lambda x : x=='Yes',previous_task_list))
+                count_allocations = sum(map(lambda x : x=='Yes',previous_task_list)) # Tính số lượng các task trước đó
                 len_allocations = len(previous_task_list)
-                
+
                 if count_allocations == len_allocations:
                     previous_task_allocated = 'Yes'
                 else:
                     previous_task_allocated = 'No'
-                
+
                 station_cut_off = max(previous_stations_list)
 
-            
-                if (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[station_cut_off-1])):
+                if (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[station_cut_off-1])) & (count_station < max_station):
                     allocation_table.iloc[i,6] = 'Yes'
                     allocation_table.iloc[i,5] = station_cut_off
                     counter[station_cut_off-1]+=current_task_time
-                    
-                elif (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[current_station-1])):
+                    count_station += 1
+
+                elif (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[current_station-1])) & (count_station < max_station):
                     allocation_table.iloc[i,6] = 'Yes'
                     allocation_table.iloc[i,5] = current_station
-                    counter[current_station-1]+=current_task_time    
+                    counter[current_station-1]+=current_task_time  
+                    count_station += 1  
                     
                 elif (previous_task_allocated == 'Yes') & (current_task_allocated == 'No'):
                     allocation_table.iloc[i,6] = 'Yes'
                     allocation_table.iloc[i,5] = current_station + 1
                     current_station+=1
                     counter[current_station-1]+=current_task_time 
-                    
+                    count_station += 1
+                    count_station = 0
+                    count_station+=1
+
                 else:
                     allocation_table.iloc[i,6] = 'Yes'
                     allocated_station = allocation_table[allocation_table['Task Number'] == current_task]['Workstation'].tolist()[0]
                     allocation_table.iloc[i,5] = allocated_station
                     allocation_table.iloc[i,4] = 0
+                    count_station+=1
+
+                
         
         #reassign the starting workstations from 1 to respective workstations
+        # Phân bổ các máy trạm từ 1 đến máy trạm tương ứng
         reassign = allocation_table[allocation_table['Task Description'] == 'START']['Task Number'].tolist()
-
-
 
         for start in reassign:
             next_task = allocation_table[allocation_table['Task Number'] == start]['Next Task'].tolist()[0]
             next_task_station = allocation_table[allocation_table['Task Number'] == next_task]['Workstation'].tolist()[0]
             allocation_table.loc[allocation_table['Task Number'] == start,'Workstation'] = next_task_station
             
-        return allocation_table            
+        return allocation_table        
 
 
     # In[7]:

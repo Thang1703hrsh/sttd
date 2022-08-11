@@ -18,7 +18,7 @@ S_1,START,,13,0.0,6,Yes,1
 14,Viền lật 2 kim chóp  hông dưới x2,2 Kim (2.2),11,0.54,7,Yes,22
 20,Ráp band  vào đuôi nón,1 Kim,11,0.51,7,Yes,21
 3,Gắn nhãn PL3.2 vào vành,1 Kim,11,0.17,6,Yes,2
-2,Viền lật gáy che + vành,2 Kim (2.2),10,0.29,6,Yes,4
+2,Viền lật gáy che + vành,2 Kim (2.2),10,0.29,8,Yes,4
 21,Diễu đuôi nón 2 bên,1 Kim,10,0.24,8,Yes,23
 22,Gọt chóp để ráp,Phụ,10,0.24,8,Yes,23
 23,Tra band vào chóp,1 Kim,9,0.78,9,Yes,24
@@ -28,8 +28,8 @@ S_1,START,,13,0.0,6,Yes,1
 24,May dây size vào chóp,1 Kim,8,0.46,11,Yes,25
 24,May dây size vào chóp,1 Kim,8,0.0,11,Yes,26
 S_4,START,,7,0.0,12,Yes,15
-26,Tra chóp vào vành,1 Kim,6,0.57,11,Yes,27
-25,Tra chóp vào vành,1 Kim,6,0.57,12,Yes,27
+25,Tra chóp vào vành,1 Kim,6,0.57,11,Yes,27
+26,Tra chóp vào vành,1 Kim,6,0.57,12,Yes,27
 15,Ráp lưới lót,1 Kim,6,0.2,12,Yes,16
 27,Gắn dây 7mm quai vào nón 2 bên,1 Kim,5,0.37,13,Yes,28
 16,Viền tẻ lưới lót + cắt,2 Kim (2.8),5,0.16,12,Yes,28
