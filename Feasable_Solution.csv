@@ -3,9 +3,9 @@ S_3,START,,18,0.0,1,Yes,8
 8,Ráp phản quang vào lưới phối trái + phải,1 Kim,17,0.52,1,Yes,9
 S_2,START,,17,0.0,1,Yes,6
 6,Ráp đỉnh trái + Đỉnh phải,1 Kim,16,0.29,1,Yes,7
-9,Vắt sổ phản quang trái + phải + cắt,Vắt sổ,16,0.26,1,Yes,10
+9,Vắt sổ phản quang trái + phải + cắt,Vắt sổ,16,0.26,2,Yes,10
 10,Diễu phối phản quang 2 bên + cắt,1 Kim,15,0.47,2,Yes,11
-7,Viền tẻ 2 kim đỉnh + Cắt,2 Kim (2.8),15,0.4,2,Yes,11
+7,Viền tẻ 2 kim đỉnh + Cắt,2 Kim (2.8),15,0.4,3,Yes,11
 S_5,START,,15,0.0,4,Yes,17
 11,Ráp đỉnh vào hông phối 2 bên,1 Kim,14,0.67,3,Yes,12
 17,Ráp Band trai + phải vào mặt,1 Kim,14,0.47,4,Yes,18
@@ -17,24 +17,24 @@ S_1,START,,13,0.0,6,Yes,1
 19,Đính khóa vào 2 bên nón,1 Kim,12,0.24,6,Yes,20
 14,Viền lật 2 kim chóp  hông dưới x2,2 Kim (2.2),11,0.54,7,Yes,22
 20,Ráp band  vào đuôi nón,1 Kim,11,0.51,7,Yes,21
-3,Gắn nhãn PL3.2 vào vành,1 Kim,11,0.17,6,Yes,2
+3,Gắn nhãn PL3.2 vào vành,1 Kim,11,0.17,8,Yes,2
 2,Viền lật gáy che + vành,2 Kim (2.2),10,0.29,8,Yes,4
-21,Diễu đuôi nón 2 bên,1 Kim,10,0.24,8,Yes,23
-22,Gọt chóp để ráp,Phụ,10,0.24,8,Yes,23
-23,Tra band vào chóp,1 Kim,9,0.78,9,Yes,24
-4,Viền 3.6 cm ( bọc vành nón ),Trụ ngang,9,0.38,10,Yes,5
-5,Khóa Viền vành 3.6cm,1 Kim,8,0.54,10,Yes,25
-5,Khóa Viền vành 3.6cm,1 Kim,8,0.0,10,Yes,26
-24,May dây size vào chóp,1 Kim,8,0.46,11,Yes,25
-24,May dây size vào chóp,1 Kim,8,0.0,11,Yes,26
-S_4,START,,7,0.0,12,Yes,15
-25,Tra chóp vào vành,1 Kim,6,0.57,11,Yes,27
-26,Tra chóp vào vành,1 Kim,6,0.57,12,Yes,27
-15,Ráp lưới lót,1 Kim,6,0.2,12,Yes,16
+21,Diễu đuôi nón 2 bên,1 Kim,10,0.24,9,Yes,23
+22,Gọt chóp để ráp,Phụ,10,0.24,9,Yes,23
+23,Tra band vào chóp,1 Kim,9,0.78,10,Yes,24
+4,Viền 3.6 cm ( bọc vành nón ),Trụ ngang,9,0.38,8,Yes,5
+5,Khóa Viền vành 3.6cm,1 Kim,8,0.54,11,Yes,25
+5,Khóa Viền vành 3.6cm,1 Kim,8,0.0,11,Yes,26
+24,May dây size vào chóp,1 Kim,8,0.46,12,Yes,25
+24,May dây size vào chóp,1 Kim,8,0.0,12,Yes,26
+S_4,START,,7,0.0,14,Yes,15
+26,Tra chóp vào vành,1 Kim,6,0.57,13,Yes,27
+25,Tra chóp vào vành,1 Kim,6,0.57,12,Yes,27
+15,Ráp lưới lót,1 Kim,6,0.2,14,Yes,16
 27,Gắn dây 7mm quai vào nón 2 bên,1 Kim,5,0.37,13,Yes,28
-16,Viền tẻ lưới lót + cắt,2 Kim (2.8),5,0.16,12,Yes,28
-28,Tra lót vào vành,Trụ ngang,4,0.7,13,Yes,29
-29,Diễu chân nón 1.5mm,Trụ ngang,3,0.73,14,Yes,30
-30,Lượt lót vào Band trên,Trụ ngang,2,0.55,15,Yes,31
-31,Gắn nhãn vào đuôi nón,1 Kim,1,0.13,15,Yes,32
-32,Viền lật 2 kim quanh nón,2 Kim,0,1.1,16,Yes,END
+16,Viền tẻ lưới lót + cắt,2 Kim (2.8),5,0.16,15,Yes,28
+28,Tra lót vào vành,Trụ ngang,4,0.7,15,Yes,29
+29,Diễu chân nón 1.5mm,Trụ ngang,3,0.73,16,Yes,30
+30,Lượt lót vào Band trên,Trụ ngang,2,0.55,17,Yes,31
+31,Gắn nhãn vào đuôi nón,1 Kim,1,0.13,17,Yes,32
+32,Viền lật 2 kim quanh nón,2 Kim,0,1.1,18,Yes,END
