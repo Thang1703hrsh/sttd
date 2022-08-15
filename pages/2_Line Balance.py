@@ -8,10 +8,18 @@ import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 from PIL import Image
 import streamlit_authenticator as stauth  # pip install streamlit-authenticator
+import streamlit.components.v1 as stc
 
 import database as db
 
-st.set_page_config(page_title="Line balance TTD", page_icon=":bar_chart:" , layout="wide")
+HTML_BANNER = """
+    <div style="background-color:#464e5f;padding:10px;border-radius:10px">
+    <h1 style="color:white;text-align:center;">Line Balance Tan Thanh Dat Co. ltd</h1>
+    <p style="color:white;text-align:center;">Professional Headwear</p>
+    </div>
+    """
+
+st.set_page_config(page_title="Line balance TTD", layout="wide")
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
 # --- USER AUTHENTICATION ---
@@ -35,24 +43,21 @@ if authentication_status == None:
 if authentication_status:
 
     # @st.cache
+    stc.html(HTML_BANNER)
 
-    def center_image(name):
-        col1, col2, col3 = st.columns([5,8,4])
-        with col1:
-            st.write("")
+    # def center_image(name):
+    #     col1, col2, col3 = st.columns([5,8,4])
+    #     with col1:
+    #         st.write("")
 
-        with col2:
-            st.image(name)
+    #     with col2:
+    #         st.image(name)
 
-        with col3:
-            st.write("")
+    #     with col3:
+    #         st.write("")
 
-    st.markdown("<h1 style='text-align: center; color: black;'>Line Balance Tan Thanh Dat Co. ltd</h1>", unsafe_allow_html=True)
-
-    st.markdown('##')
-
-    center_image('ttd.png')
-    st.markdown('##')
+    # center_image('ttd.png')
+    # st.markdown('##')
 
     st.title("Input data")
 
@@ -1097,7 +1102,14 @@ if authentication_status:
             self.ax_graph = ax_graph
             self.ct_achieved = ct_achieved
             canvas_1.create_text(self.x1+500, self.y1, font=("Arial Narrow",16, 'bold'), text= "SEW-MULATOR ENGINE by Optimalytics Business Solutions",anchor=tk.NW, fill='white')
-            
+        ##################################
+        ##################################
+        ##################################
+        ##################################
+        ## fix real time for line balance
+        ##################################
+        ##################################
+        
         def tick(self,time,production):
             
             self.canvas.delete(self.time)
@@ -1436,7 +1448,7 @@ if authentication_status:
 
 
     # In[ ]:
-    ClockAndData
+    # ClockAndData
 
     # # Start Assembly Line Simulation
     # line = Assembly_Line(file_path, solution, Workstation, data)
