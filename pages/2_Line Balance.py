@@ -1192,7 +1192,6 @@ if authentication_status:
     gs_1.update(left=0.025,right=0.99,top=0.8,bottom=0.1,wspace=0.2,hspace=0.01)
 
     subplot_dict_q = {}
-
     for col in range(solution_workstations):
         if 'a' + str(col) == 'a0':
             subplot_dict_q['a' + str(col)] = plt.subplot(gs.new_subplotspec((0,col)))
