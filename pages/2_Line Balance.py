@@ -65,7 +65,7 @@ if authentication_status:
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
 
-        input_data = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:F')
+        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
         return uploaded_file , input_data, cycle_time, workstations
@@ -77,7 +77,7 @@ if authentication_status:
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
         uploaded_file = 'Line Balancing.xlsm'
-        input_data = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:F')
+        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
         return uploaded_file , input_data, cycle_time, workstations
@@ -123,7 +123,7 @@ if authentication_status:
             st.markdown("### Detailed Data View")
             global df 
             if uploaded_file is not None: 
-                df = pd.read_excel(uploaded_file, sheet_name='hat4',skiprows=3,usecols='B:G' , nrows= 100)
+                df = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G' , nrows= 100)
                 df['Precedence'] = df['Precedence'].astype(str)
                 df['Task Description'] = df['Task Description'].astype(str)
                 df['Resource'] = df['Resource'].astype(str)
@@ -209,7 +209,7 @@ if authentication_status:
     # Functions for Line Balancing
 
     def import_data(file_path):
-        df = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:G')
+        df = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G')
 
         # Manipulate the Line Details data to split multiple Predecessors to individual rows
         temp = pd.DataFrame(columns=['Task Number', 'Precedence'])
@@ -392,7 +392,7 @@ if authentication_status:
     def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
         
         workstation_data = dict(tuple(feasable_solution.groupby('Workstation')))
-        base = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:G')
+        base = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G')
         assembly_line = []
         tasks = {}
         job_que = {}
@@ -786,7 +786,7 @@ if authentication_status:
             self.feasable_solution = feasable_solution
             self.Workstation = Workstation
             self.data = data
-            self.file = pd.read_excel(file_path,sheet_name='hat4',skiprows=3,usecols='B:F')
+            self.file = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
             self.unique_task = self.file['Task Number'].tolist()
             self.followers = self.data.groupby(['Next Task'])['Task Number'].count().to_dict()
         def create_clock(self):
