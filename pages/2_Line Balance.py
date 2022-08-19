@@ -76,7 +76,7 @@ if authentication_status:
         st.sidebar.title("Upload data")
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
-        uploaded_file = 'Line Balancing.xlsm'
+        uploaded_file = 'Line Balancing_SE.xlsm'
         input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
@@ -114,11 +114,12 @@ if authentication_status:
             """
             , unsafe_allow_html=True)
             # create three columns
-            kpi1, kpi2 , kpi3 = st.columns(3)
+            kpi1, kpi2 , kpi3 , kpi4= st.columns(4)
             # fill in those three columns with respective metrics or KPIs 
             kpi1.metric(label='Cycle time', value=float(cycle_time))
             kpi2.metric(label="Workstations", value= int((input_data['ST (Minutes)']).count()))
             kpi3.metric(label="Sum product in 600 minutes", value= int((600/cycle_time)))
+            kpi4.metric(label="Sum product in 60 minutes", value= int((60/cycle_time)))
 
             st.markdown("### Detailed Data View")
             global df 
@@ -899,11 +900,12 @@ if authentication_status:
         """
         , unsafe_allow_html=True)
         # create three columns
-        kpi1, kpi2 , kpi3 = st.columns(3)
+        kpi1, kpi2 , kpi3 , kpi4 = st.columns(4)
         # fill in those three columns with respective metrics or KPIs 
         kpi1.metric(label='Cycle time Now', value=0.73 , delta = "{} Minutes".format(round(float(cycle_time) - 0.73 , 2)))
         kpi2.metric(label="Workstations Now", value= int((df_new['Work']).count()) , delta = "{} Workstations" .format(int((df['Task Number']).count()) - int((df_new['Work']).count())))
         kpi3.metric(label="Sum product in 600 minutes", value= int((600/0.73)) , delta ="{} %" .format(round(((int(600/0.73)/int(600/cycle_time)) * 100),2)))
+        kpi4.metric(label="Sum product in 60 minutes", value= int((60/0.73)) , delta ="{} %" .format(round(((int(60/0.73)/int(60/cycle_time)) * 100),2)))
 
     # st.markdown('##LINE BALANCE')
     def readimg_LineBalance():
