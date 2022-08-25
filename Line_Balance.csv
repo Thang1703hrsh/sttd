@@ -1,43 +1,36 @@
 Task Number,Task Description,Resource,Number of Following Task,ST (Minutes),Workstation,Allocated,Next Task
-S_3,START,,17,0.0,1,Yes,13
-13,Ráp hông lưới vào hông phối ( 2 bên ),1 Kim,16,0.3,0,No,15
-S_2,START,,16,0.0,1,Yes,9
-9,Ráp 6mm đỉnh nón,1 Kim,15,0.3,0,No,12
-15,Vắt sổ hông lưới và hông phối ( 2 bên ),Vắt sổ,15,0.06,0,No,16
-S_6,START,,15,0.0,1,Yes,33
-S_1,START,,15,0.0,1,Yes,1
-1,May cọng cước vào vành ( Cọng cước cắt đôi ở điểm giữa vành ),Ziczac,14,0.57,0,No,2
-33,Ráp 5mm con đĩa,1 Kim,14,0.28,0,No,31
-12,Viền 2 kim đỉnh nón ( Viền 2 kim thường),2 Kim,14,0.24,0,No,17
-16,Diễu 1.5 mm hông phối,1 Kim,14,0.09,0,No,17
-17,Ráp hông phối và hông vào đỉnh ( 2 bên ),1 Kim,13,0.86,0,No,18
-2,Bọc đầu cọng cước ở giưã vành bằng keo HQ ( Bọc hai lớp keo ) + Bọc hai đầu cọng cước ở ngoài vành bằng vải kate hoặc vải chính,1 Kim,13,0.61,0,No,3
-31,May chặn đầu dây khoá + May chặn con đĩa vào khóa,1 Kim,13,0.39,0,No,10
-18,Diễu viền 2 kim 5mm đỉnh và hông phối ( 2 bên-viền diễu phần đỉnh ),2 Kim,12,0.59,0,No,19
-3,Ráp gáy che vào vành,1 Kim,12,0.48,0,No,5
-10,"Gắn khoá vào đuôi nón( Bên ngắn TP = 1 cm , bên dài TP = 10 cm ) Phần dành xỏ khoá cắt 6 cm ráp nối 6-7 mm",1 Kim,12,0.39,0,No,21
-21,"Ráp mặt vào hông nón ( Ráp theo dấu , chừa 1 lỗ 2.5cm ở giữa ) + Lược hông nón vào đuôi nón ( Lược theo dấu )",1 Kim,11,1.19,0,No,22
-19,Ráp hông dưới vào hông trên ( 2 bên ),1 Kim,11,0.78,0,No,20
-5,"Viền diễu 2 kim 5mm gáy che và vành ( Dây viền 2.2 ép lưới và lót thêm 1 lớp keo
-HQ bên trong rộng 8-9 mm",2 Kim,11,0.38,0,No,6
-22,Diễu 2mm hai bên đường ráp mặt và hông nón ( Giống sun tripper) + Diễu gấp đầu 2mm hông nón ( Phần đuôi ),1 Kim,10,1.27,0,No,23
-6,Bọc viền xung quanh vành,Trụ bước ngang,10,0.99,0,No,28
-20,Diễu viền 2 kim 5mm hông dưới ( 2 bên ),2 Kim,10,0.36,0,No,23
-28,May bọc viền vành,1 Kim,9,1.02,0,No,29
-23,"Ráp thân dưới vào chóp nón
-( Ráp 6mm điểm xỏ trùng với điểm giưã hai kim của hông nón )",1 Kim,9,0.95,0,No,4
-4,May dây size felt vào nón,1 Kim,8,1.38,0,No,24
-29,Lược nhãn vào gáy che,1 Kim,8,0.18,0,No,24
-S_4,START,,8,0.0,1,Yes,14
-24,Tra chóp vào vành,1 Kim,7,0.95,0,No,7
-14,Ráp lót đai ,1 Kim,7,0.24,0,No,11
-7,Đính dây quai vào vành,Trụ bước đứng,6,0.49,0,No,25
-11,Viền 2 kim lót đai,2 Kim,6,0.09,0,No,25
-25,Tra lót chóp vào vành,Trụ bước đứng,5,1.3,0,No,27
-S_5,START,,5,0.0,1,Yes,32
-27,Ráp lược lót chóp vào chóp ( lược phần trên ),1 Kim,4,1.43,0,No,26
-32,Lược nhiều cái nhãn dính lại với nhau,1 Kim,4,0.82,0,No,26
-26,Lược nhãn vào giữa đường 2 kim chóp,1 Kim,3,0.18,0,No,8
-8,Diễu 1.5mm xung quanh chân nón,Trụ bước đứng,2,0.93,0,No,30
-30,Diễu viền 2 kim 5mm thân xung quanh chóp,2 Kim,1,1.28,0,No,34
-34,May Ziczac chặn 4 điểm ở các bên xỏ lỗ ( tham khảo mẫu ) (máy lập trình khuy-bọ),Ziczac (Lập trình),0,0.84,0,No,END
+S_3,START,,18,0.0,1,Yes,9
+9,Ráp hông lưới vào hông phối ( 2 bên ) + Ráp lót đai ,1 Kim,17,0.54,0,No,10
+9,Ráp hông lưới vào hông phối ( 2 bên ) + Ráp lót đai ,1 Kim,17,0.54,0,No,11
+S_4,START,,16,0.0,1,Yes,13
+13,Ráp 6mm đỉnh nón,1 Kim,15,0.3,0,No,14
+11,Vắt sổ hông lưới và hông phối ( 2 bên ),Vắt sổ,15,0.13,0,No,12
+14,Viền 2 kim đỉnh nón ( Viền 2 kim thường),2 Kim,14,0.24,0,No,15
+12,Diễu 1.5 mm hông phối,1 Kim,14,0.09,0,No,15
+15,Ráp hông phối và hông vào đỉnh ( 2 bên ),1 Kim,13,0.67,0,No,16
+S_1,START,,13,0.0,1,Yes,1
+S_2,START,,13,0.0,1,Yes,6
+16,Diễu viền 2 kim 5mm đỉnh và hông phối ( 2 bên-viền diễu phần đỉnh ),2 Kim,12,0.59,0,No,17
+1,Ráp gáy che vào vành,1 Kim,12,0.48,0,No,2
+6,"Gắn khoá vào đuôi nón( Bên ngắn TP = 1 cm , bên dài TP = 10 cm ) Phần dành xỏ khoá cắt 6 cm ráp nối 6-7 mm",1 Kim,12,0.39,0,No,7
+7,"Ráp mặt vào hông nón ( Ráp theo dấu , chừa 1 lỗ 2.5cm ở giữa ) + Lược hông nón vào đuôi nón ( Lược theo dấu )",1 Kim,11,1.19,0,No,8
+17,Ráp hông dưới vào hông trên ( 2 bên ),1 Kim,11,0.78,0,No,18
+2,"Viền diễu 2 kim 5mm gáy che và vành ( Dây viền 2.2 ép lưới và lót thêm 1 lớp keo
+HQ bên trong rộng 8-9 mm",2 Kim,11,0.38,0,No,3
+8,Diễu 2mm hai bên đường ráp mặt và hông nón ( Giống sun tripper) + Diễu gấp đầu 2mm hông nón ( Phần đuôi ),1 Kim,10,1.27,0,No,19
+3,Bọc viền xung quanh vành,Trụ bước ngang,10,0.59,0,No,4
+18,Diễu viền 2 kim 5mm hông dưới ( 2 bên ),2 Kim,10,0.36,0,No,19
+4,May bọc viền vành,1 Kim,9,1.02,0,No,5
+19,"Ráp thân dưới vào chóp nón
+( Ráp 6mm điểm xỏ trùng với điểm giưã hai kim của hông nón )",1 Kim,9,0.95,0,No,20
+20,May dây size felt vào nón,1 Kim,8,1.38,0,No,21
+5,Lược nhãn vào gáy che,1 Kim,8,0.18,0,No,21
+21,Tra chóp vào vành,1 Kim,7,0.95,0,No,22
+22,Đính dây quai vào vành,Trụ bước đứng,6,0.3,0,No,23
+10,Viền 2 kim lót đai,2 Kim,6,0.09,0,No,23
+23,Tra lót chóp vào vành,Trụ bước đứng,5,1.3,0,No,24
+24,Ráp lược lót chóp vào chóp ( lược phần trên ),1 Kim,4,1.43,0,No,25
+25,Lược nhãn vào giữa đường 2 kim chóp,1 Kim,3,0.18,0,No,26
+26,Diễu 1.5mm xung quanh chân nón,Trụ bước đứng,2,0.93,0,No,27
+27,Diễu viền 2 kim 5mm thân xung quanh chóp,2 Kim,1,1.28,0,No,28
+28,May Ziczac chặn 4 điểm ở các bên xỏ lỗ ( tham khảo mẫu ) (máy lập trình khuy-bọ),Ziczac (Lập trình),0,0.84,0,No,END

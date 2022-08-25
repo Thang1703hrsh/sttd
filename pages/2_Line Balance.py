@@ -9,6 +9,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 from PIL import Image
 import streamlit_authenticator as stauth  # pip install streamlit-authenticator
 import streamlit.components.v1 as stc
+import datetime
 
 import database as db
 
@@ -65,8 +66,8 @@ if authentication_status:
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
 
-        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
-        cycle_time = max(input_data['ST (Minutes)'])
+        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+        cycle_time = max(input_data['ST (Minutes)']/input_data['No of Operators'])
         workstations = (input_data['ST (Minutes)']).count()
         return uploaded_file , input_data, cycle_time, workstations
 
@@ -76,13 +77,14 @@ if authentication_status:
         st.sidebar.title("Upload data")
         uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
-        uploaded_file = 'Line Balancing_SE.xlsm'
-        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
+        # uploaded_file = 'Line Balancing_SE.xlsm'
+        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+        cycle_time_max = max(input_data['ST (Minutes)']/ input_data['No of Operators'])
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
-        return uploaded_file , input_data, cycle_time, workstations
+        return uploaded_file , input_data, cycle_time_max , cycle_time, workstations
 
-    uploaded_file , input_data, cycle_time, workstations = Sidebar()
+    uploaded_file , input_data, cycle_time_max , cycle_time, workstations = Sidebar()
 
     def set_page_input(uploaded_file):
         placeholder1 = st.empty()
@@ -114,17 +116,20 @@ if authentication_status:
             """
             , unsafe_allow_html=True)
             # create three columns
-            kpi1, kpi2 , kpi3 , kpi4= st.columns(4)
+            kpi1, kpi2 , kpi3 , kpi4 , kpi5= st.columns(5)
             # fill in those three columns with respective metrics or KPIs 
-            kpi1.metric(label='Cycle time', value=float(cycle_time))
-            kpi2.metric(label="Workstations", value= int((input_data['ST (Minutes)']).count()))
-            kpi3.metric(label="Sum product in 600 minutes", value= int((600/cycle_time)))
-            kpi4.metric(label="Sum product in 60 minutes", value= int((60/cycle_time)))
+            cyc_time = float(max(input_data['ST (Minutes)']))
+            kpi1.metric(label='Chu kì sản xuất', value=cyc_time)
+            kpi2.metric(label="Số trạm sản xuất", value= int((input_data['ST (Minutes)']).count()))
+            kpi3.metric(label="Số sản phẩm trong 600'", value= int((600/cyc_time)))
+            kpi4.metric(label="Số sản phẩm trong 60'", value= int((60/cyc_time)))
+            kpi5.metric(label="Hiệu suất sản xuất", value= round((int((60/cyc_time))/int((input_data['ST (Minutes)']).count())), 2))
+
 
             st.markdown("### Detailed Data View")
             global df 
             if uploaded_file is not None: 
-                df = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G' , nrows= 100)
+                df = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G' , nrows= 100)
                 df['Precedence'] = df['Precedence'].astype(str)
                 df['Task Description'] = df['Task Description'].astype(str)
                 df['Resource'] = df['Resource'].astype(str)
@@ -190,7 +195,7 @@ if authentication_status:
     # Global Variables
 
     # Import the Line Details from Base File and Create Base Data
-    file_path = r'Line Balancing.xlsm'
+    file_path = r'Line Balancing_SE.xlsm'
 
     # For Capturing the Production During Simulation
     throughput = 0
@@ -210,7 +215,7 @@ if authentication_status:
     # Functions for Line Balancing
 
     def import_data(file_path):
-        df = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G')
+        df = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
 
         # Manipulate the Line Details data to split multiple Predecessors to individual rows
         temp = pd.DataFrame(columns=['Task Number', 'Precedence'])
@@ -347,12 +352,12 @@ if authentication_status:
                     previous_task_allocated = 'No'
 
                 station_cut_off = max(previous_stations_list)
-                if (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[station_cut_off-1])) & (count_station < max_station):
+                if (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time_max - counter[station_cut_off-1])) & (count_station < max_station):
                     allocation_table.iloc[i,6] = 'Yes'
                     allocation_table.iloc[i,5] = station_cut_off
                     counter[station_cut_off-1]+=current_task_time
                     count_station += 1
-                elif (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time - counter[current_station-1])) & (count_station < max_station):
+                elif (previous_task_allocated == 'Yes') & (current_task_allocated == 'No') & (current_task_time <= (cycle_time_max - counter[current_station-1])) & (count_station < max_station):
                     allocation_table.iloc[i,6] = 'Yes'
                     allocation_table.iloc[i,5] = current_station
                     counter[current_station-1]+=current_task_time  
@@ -393,7 +398,7 @@ if authentication_status:
     def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
         
         workstation_data = dict(tuple(feasable_solution.groupby('Workstation')))
-        base = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:G')
+        base = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
         assembly_line = []
         tasks = {}
         job_que = {}
@@ -763,7 +768,7 @@ if authentication_status:
     # Tạo lớp g là môi trường chính cho mô phỏng
     class g:
         warmup_time = 5
-        sim_time = 40
+        sim_time = 60
         bundle_size = 60
         finished_RM = pd.DataFrame(columns=['Process', 'Resource_Id', 'Finished_RM'])
         proc_wait_plot_data = pd.DataFrame(columns=['Process', 'Workstation', 'Wait_Time'])
@@ -787,7 +792,7 @@ if authentication_status:
             self.feasable_solution = feasable_solution
             self.Workstation = Workstation
             self.data = data
-            self.file = pd.read_excel(file_path,sheet_name='cap_ultra_merge_1',skiprows=3,usecols='B:F')
+            self.file = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
             self.unique_task = self.file['Task Number'].tolist()
             self.followers = self.data.groupby(['Next Task'])['Task Number'].count().to_dict()
         def create_clock(self):
@@ -825,14 +830,14 @@ if authentication_status:
 
     # Function to convert Simulation Number to Clock Time
     def get_simulation_time(sim_min):
-        time = '09:00'
+        time_now = datetime.datetime.now()
+        time = time_now.strftime("%H:%M")
         h, m = map(int, time.split(':'))
         init_time = dtt(hour=h, minute=m)
         timdelta = td(minutes=sim_min)
         tmp_datetime = datetime.datetime.combine(datetime.date(1, 1, 1), init_time)
         time2 = (tmp_datetime + timdelta).time()
         return time2.strftime("%I:%M %p")
-
 
     # In[18]:
 
@@ -900,12 +905,13 @@ if authentication_status:
         """
         , unsafe_allow_html=True)
         # create three columns
-        kpi1, kpi2 , kpi3 , kpi4 = st.columns(4)
+        kpi1, kpi2 , kpi3 , kpi4 , kpi5 = st.columns(5)
         # fill in those three columns with respective metrics or KPIs 
-        kpi1.metric(label='Cycle time Now', value=0.73 , delta = "{} Minutes".format(round(float(cycle_time) - 0.73 , 2)))
-        kpi2.metric(label="Workstations Now", value= int((df_new['Work']).count()) , delta = "{} Workstations" .format(int((df['Task Number']).count()) - int((df_new['Work']).count())))
-        kpi3.metric(label="Sum product in 600 minutes", value= int((600/0.73)) , delta ="{} %" .format(round(((int(600/0.73)/int(600/cycle_time)) * 100),2)))
-        kpi4.metric(label="Sum product in 60 minutes", value= int((60/0.73)) , delta ="{} %" .format(round(((int(60/0.73)/int(60/cycle_time)) * 100),2)))
+        kpi1.metric(label='Chu kì sản xuất', value= float(cycle_time_max) , delta = "{} Minutes".format(round(float(cycle_time) - cycle_time_max , 2)))
+        kpi2.metric(label="Số trạm sản xuất", value= int((df_new['Work']).count()) , delta = "{} Workstations" .format(int((df['Task Number']).count()) - int((df_new['Work']).count())))
+        kpi3.metric(label="Số sản phẩm trong 600'", value= int((600/cycle_time_max)) , delta ="{} %" .format(round(((int(600/cycle_time_max)/int(600/cycle_time)) * 100),2)))
+        kpi4.metric(label="Số sản phẩm trong 60'", value= int((60/cycle_time_max)) , delta ="{} %" .format(round(((int(60/cycle_time_max)/int(60/cycle_time)) * 100),2)))  
+        kpi5.metric(label="Hiệu suất sản xuất", value= round((int((60/cycle_time_max))/int((df_new['Work']).count())), 2) ,delta ="{} %" .format(round(((round((int((60/cycle_time_max))/int((df_new['Work']).count())), 2) / round((int((60/cycle_time))/int((input_data['ST (Minutes)']).count())), 2)) * 100),2)))
 
     # st.markdown('##LINE BALANCE')
     def readimg_LineBalance():
@@ -913,13 +919,14 @@ if authentication_status:
         new_image = image.resize((1400, 600))
         st.image(new_image)  
     readimg_LineBalance()
+
     placeholder3 = st.empty()
     with placeholder3.container():
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
             st.markdown("### Line Chart Time Series After Balance")
             fig = px.line(df_new, x ='Work' , y ='SumST', text = "SumST")
-            fig.add_scatter(x=df_new['Work'], y= [cycle_time]*len(df_new['Work']) , name = 'Cycle time') 
+            fig.add_scatter(x=df_new['Work'], y= [cycle_time_max]*len(df_new['Work']) , name = 'Cycle time') 
             fig.update_traces(textposition="bottom right")
             st.plotly_chart(fig , use_container_width=True)
         with fig_col2:
@@ -928,10 +935,39 @@ if authentication_status:
             fig.update_traces(textposition="auto")
             st.plotly_chart(fig)
 
+    feasable = pd.read_csv("Feasable_Solution.csv")
+    feasable = feasable[feasable["ST (Minutes)"] != 0]
+    feasable = feasable.reset_index(drop = True)
+
+    feasable["Task Number"] = pd.to_numeric(feasable["Task Number"])
+
+    max_work = max(feasable["Workstation"])
+    max_task = max(feasable["Task Number"])
+    arr = [[0 for i in range(max_task)] for j in range(max_work)]
+
+    feasable = feasable.sort_values(by=['Task Number'])
+
+    feasable = feasable.reset_index(drop = True)
+
+
+    placeholder4 = st.empty()
+    with placeholder4.container():
+        fig_col1, fig_col2 = st.columns(2)
+        with fig_col1:
+            st.markdown("### Biểu đồ cột thể hiện chi tiết thời gian từng trạm")
+            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
+                barmode = 'stack',  text_auto=True)
+            st.plotly_chart(fig)
+        with fig_col2:
+            st.markdown("### Biểu đồ cột thể hiện chi tiết các công đoạn ở mỗi trạm")
+            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
+                barmode = 'stack', text = "Task Number")
+            st.plotly_chart(fig)
+
     # Class to Create Simulation Charts during intervals
     class ClockAndData:
         def __init__(self, canvas, canvas_1, x1, y1, time, current_production, workstations, subplot_dict_p,
-                    subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, 
+                    subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time_max, allocation, position, ax_graph, 
                     ct_achieved):
             self.canvas = canvas
             self.canvas_1 = canvas_1
@@ -944,7 +980,7 @@ if authentication_status:
             self.subplot_dict_q = subplot_dict_q
             self.subplot_dict_w = subplot_dict_w
             self.subplot_dict_wip = subplot_dict_wip
-            self.cycle_time = cycle_time
+            self.cycle_time_max = cycle_time_max
             self.allocation = allocation
             self.position = position
             self.ax_graph = ax_graph
@@ -952,24 +988,24 @@ if authentication_status:
             canvas_1.create_text(self.x1+500, self.y1, font=("Arial Narrow",16, 'bold'), text= "SEW-MULATOR ENGINE by Optimalytics Business Solutions",anchor=tk.NW, fill='white')
         
         def tick(self,time,production):
-            
+
+
             self.canvas.delete(self.time)
             x1_start = self.x1 + 50
-            self.time = canvas.create_text(x1_start, self.y1, font=("Arial Narrow",14,'bold'), 
-                                        text = "Simulation Time : " + str(get_simulation_time(round(time, 1))), anchor = tk.NW,fill='#6C3400')
-            
-            
+            # self.time = canvas.create_text(x1_start, self.y1, font=("Arial Narrow",14,'bold'), 
+            #                             text = "Simulation Time: " + str(get_simulation_time(round(time, 1))), anchor = tk.NW,fill='#6C3400')
+
             x2_start = x1_start + 400
             self.canvas.delete(self.ct_achieved)
             x3_start = x2_start + 400
+
             achieved = round(g.cycle_data['CT'].mean(),2)
             self.ct_achieved = canvas.create_text(x3_start, self.y1, font=("Arial Narrow",14,'bold'), 
                                                 text = "Cycle Time Now: " + str(achieved), anchor = tk.NW,fill='#6C3400')
-            
+
             self.canvas.delete(self.current_production)
             x4_start = x3_start + 400
-            self.current_production = canvas.create_text(x4_start, self.y1, font=("Arial Narrow",14,'bold'), text= "ThroughPut : "+ str(production),anchor=tk.NW, fill='#6C3400')
-                        
+            # self.current_production = canvas.create_text(x4_start, self.y1, font=("Arial Narrow",14,'bold'), text= "ThroughPut : "+ str(production),anchor=tk.NW, fill='#6C3400')
             self.canvas.update()   
             
             # Capture the Production Related Data in the First Tab of Simulation Visualization
@@ -1034,7 +1070,7 @@ if authentication_status:
                 x_lab = list(map(str,process))      
                 sub_p.bar(x_lab, waiting, color = '#0065A2')
                 sub_p.set_title('W_%d' %(int(i)+1),fontsize=8)
-                sub_p.set_ylim(ymin=0, ymax = self.cycle_time)
+                sub_p.set_ylim(ymin=0, ymax = self.cycle_time_max)
                 sub_p.set_xticklabels(labels = x_lab,rotation=90)
                 
                 
@@ -1254,12 +1290,12 @@ if authentication_status:
     data_plot_3.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
     clock = ClockAndData(canvas, company_name, (main.winfo_screenwidth()*.05)/2, (main.winfo_screenheight()*.05)/2, 0, 0, solution_workstations, subplot_dict_p,
-                        subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time, allocation, position, ax_graph, 0)
+                        subplot_dict_q, subplot_dict_w, subplot_dict_wip, cycle_time_max, allocation, position, ax_graph, 0)
 
     # In[ ]:
     # ClockAndData
 
-    # # Start Assembly Line Simulation
+    # Start Assembly Line Simulation
     # line = Assembly_Line(file_path, solution, Workstation, data)
     # line.run()
     # main.mainloop()
