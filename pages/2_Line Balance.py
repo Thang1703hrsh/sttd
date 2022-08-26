@@ -10,8 +10,9 @@ from PIL import Image
 import streamlit_authenticator as stauth  # pip install streamlit-authenticator
 import streamlit.components.v1 as stc
 import datetime
-
 import database as db
+import openpyxl
+
 
 HTML_BANNER = """
     <div style="background-color:#464e5f;padding:10px;border-radius:10px">
@@ -60,31 +61,32 @@ if authentication_status:
     # center_image('ttd.png')
     # st.markdown('##')
 
-    st.title("Input data")
-
-    def uploadFile(uploaded_file):
-        uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
-                                        , type = ['csv' , 'xlsx' , 'xlsm'])
-
-        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
-        cycle_time = max(input_data['ST (Minutes)']/input_data['No of Operators'])
-        workstations = (input_data['ST (Minutes)']).count()
-        return uploaded_file , input_data, cycle_time, workstations
+    st.markdown("<h2 style='text-align: center; color: black;'>Input data</h2>", unsafe_allow_html=True)
 
     def Sidebar():
         #Add the sidebar
         authenticator.logout("Logout", "sidebar")
         st.sidebar.title("Upload data")
-        uploaded_file = st.sidebar.file_uploader(label = "Upload your CSV or Excel file."
+        uploaded_file = st.sidebar.file_uploader(label = "Nhập file Excel file."
                                         , type = ['csv' , 'xlsx' , 'xlsm'])
         # uploaded_file = 'Line Balancing_SE.xlsm'
-        input_data = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+        if uploaded_file == None:
+            uploaded_file = 'Line Balancing_SE.xlsm'
+            sheet_fw = 'cap_ultra_merge'
+        else: 
+            book = openpyxl.load_workbook(uploaded_file)
+            # sheet_choice = st.columns(3)
+            all_sheet = book.sheetnames
+            sheet_fw = st.sidebar.selectbox("Chọn sheet", all_sheet) 
+        input_data = pd.read_excel(uploaded_file, sheet_name= sheet_fw ,skiprows=3,usecols='B:G')
         cycle_time_max = max(input_data['ST (Minutes)']/ input_data['No of Operators'])
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
-        return uploaded_file , input_data, cycle_time_max , cycle_time, workstations
 
-    uploaded_file , input_data, cycle_time_max , cycle_time, workstations = Sidebar()
+
+        return uploaded_file , sheet_fw , input_data, cycle_time_max , cycle_time, workstations
+
+    uploaded_file , sheet_fw , input_data, cycle_time_max , cycle_time, workstations = Sidebar()
 
     def set_page_input(uploaded_file):
         placeholder1 = st.empty()
@@ -125,11 +127,11 @@ if authentication_status:
             kpi4.metric(label="Số sản phẩm trong 60'", value= int((60/cyc_time)))
             kpi5.metric(label="Hiệu suất sản xuất", value= round((int((60/cyc_time))/int((input_data['ST (Minutes)']).count())), 2))
 
-
-            st.markdown("### Detailed Data View")
+            st.markdown("<h2 style='text-align: center; color: black;'>Detailed Data View</h2>", unsafe_allow_html=True)
+            
             global df 
             if uploaded_file is not None: 
-                df = pd.read_excel(uploaded_file, sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G' , nrows= 100)
+                df = pd.read_excel(uploaded_file, sheet_name=sheet_fw,skiprows=3,usecols='B:G' , nrows= 100)
                 df['Precedence'] = df['Precedence'].astype(str)
                 df['Task Description'] = df['Task Description'].astype(str)
                 df['Resource'] = df['Resource'].astype(str)
@@ -147,14 +149,14 @@ if authentication_status:
 
             fig_col1, fig_col2 = st.columns(2)
             with fig_col1:
-                st.markdown("### Line Chart Time Series")
+                st.markdown("### Biểu đồ đường")
                 fig = px.line(df, x ='Task Number' , y ='ST (Minutes)', text = "ST (Minutes)")
                 fig.add_scatter(x=df['Task Number'], y= [cycle_time]*len(df['Task Number']) , name = 'Cycle time') 
                 fig.update_traces(textposition="bottom right")
                 st.plotly_chart(fig , use_container_width=True)
 
             with fig_col2:
-                st.markdown("### Bar Chart Time Series")
+                st.markdown("### Biểu đồ cột")
                 fig = px.bar(df, x ='Task Number' , y ='ST (Minutes)' , color = "Task Number")
                 fig.update_traces(textposition="auto")
                 st.plotly_chart(fig)
@@ -215,7 +217,7 @@ if authentication_status:
     # Functions for Line Balancing
 
     def import_data(file_path):
-        df = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+        df = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
 
         # Manipulate the Line Details data to split multiple Predecessors to individual rows
         temp = pd.DataFrame(columns=['Task Number', 'Precedence'])
@@ -325,10 +327,12 @@ if authentication_status:
 
         st.markdown("<h2 style='text-align: center; color: black;'>Input max workstation for balance</h2>", unsafe_allow_html=True)
         with st.form(key = "Information form"):
-            max_station = st.number_input("Enter max workstation")
+            max_station = st.number_input("Nhập số lượng tối đa trạm sản xuất")
             submission = st.form_submit_button(label= "Submit")
             if submission == True:
                 st.success("Successfully submitted")
+            if max_station == 0:
+                st.error("Please, re-enter workstation")
 
         # i là index, d là data trong mỗi hàng
         for i, d in allocation_table.iterrows():
@@ -398,7 +402,7 @@ if authentication_status:
     def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
         
         workstation_data = dict(tuple(feasable_solution.groupby('Workstation')))
-        base = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+        base = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
         assembly_line = []
         tasks = {}
         job_que = {}
@@ -792,7 +796,7 @@ if authentication_status:
             self.feasable_solution = feasable_solution
             self.Workstation = Workstation
             self.data = data
-            self.file = pd.read_excel(file_path,sheet_name='cap_ultra_merge_3',skiprows=3,usecols='B:G')
+            self.file = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
             self.unique_task = self.file['Task Number'].tolist()
             self.followers = self.data.groupby(['Next Task'])['Task Number'].count().to_dict()
         def create_clock(self):
@@ -819,8 +823,17 @@ if authentication_status:
     Line_Balance = create_LB_Table(data,graph)
     Line_Balance.to_csv('Line_Balance.csv',index=False)
     solution = find_feasable_allocation(data,Line_Balance,cycle_time,workstations)
-    solution.to_csv('Feasable_Solution.csv',index=False)
+    solution.to_csv('Feasable_Solution.csv',index=False ,  encoding="utf-8")
     solution_workstations = max(solution['Workstation'].tolist())
+
+    def df_new_bl():
+        sumindex = []
+        for i in range(1 , max(solution['Workstation'])+1):
+            sumindex.append(sum(solution[solution['Workstation'] == i]["ST (Minutes)"]))
+        wks = np.unique(solution['Workstation']).tolist()
+        df_new = pd.DataFrame(data = {'Work' : wks , 'SumST': sumindex})
+        return df_new
+    df_new = df_new_bl()
 
     # In[16]:
 
@@ -869,15 +882,7 @@ if authentication_status:
     save_graph(solution,workstations,node_colors)    
 
     st.markdown("<h1 style='text-align: center; color: red;'>SEW-MULATOR ENGINE by Optimalytics Business Solutions</h1>", unsafe_allow_html=True)
-    
-    def df_new_bl():
-        sumindex = []
-        for i in range(1 , max(solution['Workstation'])+1):
-            sumindex.append(sum(solution[solution['Workstation'] == i]["ST (Minutes)"]))
-        wks = np.unique(solution['Workstation']).tolist()
-        df_new = pd.DataFrame(data = {'Work' : wks , 'SumST': sumindex})
-        return df_new
-    df_new = df_new_bl()
+
 
     placeholder4 = st.empty()
     with placeholder4.container():   
@@ -924,13 +929,13 @@ if authentication_status:
     with placeholder3.container():
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
-            st.markdown("### Line Chart Time Series After Balance")
+            st.markdown("### 1. Biểu đồ đường thể hiện thời gian các trạm")
             fig = px.line(df_new, x ='Work' , y ='SumST', text = "SumST")
             fig.add_scatter(x=df_new['Work'], y= [cycle_time_max]*len(df_new['Work']) , name = 'Cycle time') 
             fig.update_traces(textposition="bottom right")
             st.plotly_chart(fig , use_container_width=True)
         with fig_col2:
-            st.markdown("### Bar Chart Time Series After Balance")
+            st.markdown("### 2. Biểu đồ cột thể hiện thời gian các trạm")
             fig = px.bar(df_new, x ='Work' , y = 'SumST' ,  color = "Work")
             fig.update_traces(textposition="auto")
             st.plotly_chart(fig)
@@ -954,12 +959,12 @@ if authentication_status:
     with placeholder4.container():
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
-            st.markdown("### Biểu đồ cột thể hiện chi tiết thời gian từng trạm")
+            st.markdown("### 1. Biểu đồ cột thể hiện chi tiết thời gian từng trạm")
             fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
                 barmode = 'stack',  text_auto=True)
             st.plotly_chart(fig)
         with fig_col2:
-            st.markdown("### Biểu đồ cột thể hiện chi tiết các công đoạn ở mỗi trạm")
+            st.markdown("### 2. Biểu đồ cột thể hiện chi tiết các công đoạn ở mỗi trạm")
             fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
                 barmode = 'stack', text = "Task Number")
             st.plotly_chart(fig)
