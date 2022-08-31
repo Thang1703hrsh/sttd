@@ -78,7 +78,7 @@ if authentication_status:
             # sheet_choice = st.columns(3)
             all_sheet = book.sheetnames
             sheet_fw = st.sidebar.selectbox("Chọn sheet", all_sheet) 
-        input_data = pd.read_excel(uploaded_file, sheet_name= sheet_fw ,skiprows=3,usecols='B:G')
+        input_data = pd.read_excel(uploaded_file, sheet_name= sheet_fw ,skiprows=3,usecols='B:H')
         cycle_time_max = max(input_data['ST (Minutes)']/ input_data['No of Operators'])
         cycle_time = max(input_data['ST (Minutes)'])
         workstations = (input_data['ST (Minutes)']).count()
@@ -121,7 +121,7 @@ if authentication_status:
             kpi1, kpi2 , kpi3 , kpi4 , kpi5= st.columns(5)
             # fill in those three columns with respective metrics or KPIs 
             cyc_time = float(max(input_data['ST (Minutes)']))
-            kpi1.metric(label='Chu kì sản xuất', value=cyc_time)
+            kpi1.metric(label='Chu kì sản xuất', value=round(cyc_time, 2))
             kpi2.metric(label="Số trạm sản xuất", value= int((input_data['ST (Minutes)']).count()))
             kpi3.metric(label="Số sản phẩm trong 600'", value= int((600/cyc_time)))
             kpi4.metric(label="Số sản phẩm trong 60'", value= int((60/cyc_time)))
@@ -131,7 +131,7 @@ if authentication_status:
             
             global df 
             if uploaded_file is not None: 
-                df = pd.read_excel(uploaded_file, sheet_name=sheet_fw,skiprows=3,usecols='B:G' , nrows= 100)
+                df = pd.read_excel(uploaded_file, sheet_name=sheet_fw,skiprows=3,usecols='B:H' , nrows= 100)
                 df['Precedence'] = df['Precedence'].astype(str)
                 df['Task Description'] = df['Task Description'].astype(str)
                 df['Resource'] = df['Resource'].astype(str)
@@ -217,7 +217,7 @@ if authentication_status:
     # Functions for Line Balancing
 
     def import_data(file_path):
-        df = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
+        df = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:H')
 
         # Manipulate the Line Details data to split multiple Predecessors to individual rows
         temp = pd.DataFrame(columns=['Task Number', 'Precedence'])
@@ -237,11 +237,27 @@ if authentication_status:
 
         # Create the Final Data for drawing precedence graph
         
-        final_df = temp.merge(df[['Task Number','Task Description','Resource','ST (Minutes)']],on='Task Number',how='left')
-        final_df = final_df[['Task Number','Task Description', 'Resource','ST (Minutes)','Next Task']]
+        final_df = temp.merge(df[['Task Number','Task Description','Resource','ST (Minutes)' , 'No of Operators', 'Preparation Stage']],on='Task Number',how='left')
+        final_df = final_df[['Task Number','Task Description', 'Resource','ST (Minutes)','Next Task' , 'No of Operators','Preparation Stage']]
         final_df['ST (Minutes)'] = final_df['ST (Minutes)'].fillna(0)
+        final_df['Preparation Stage'] = final_df['Preparation Stage'].fillna(1)
         final_df['Task Description'] = final_df['Task Description'].fillna('START')
 
+        for i, d in final_df.iterrows():
+            if d[6] == 0:
+                for j , k in final_df.iterrows():
+                    if d[0] == k[4]:
+                        # final_df = final_df.replace(k[4] , d[4])
+                        final_df['Next Task'].loc[j] = d[4]
+        for i, d in final_df.iterrows():
+            if d[6] == 0:
+                for j , k in final_df.iterrows():
+                    if d[0] == k[4]:
+                        # final_df = final_df.replace(k[4] , d[4])
+                        final_df['Next Task'].loc[j] = d[4]
+                final_df = final_df.drop(i, axis=0, inplace=False)
+        final_df.reset_index(inplace = True , drop = True)
+    
         counter = 1
         for i, d in final_df.iterrows():
             if d[0] == 0:
@@ -333,6 +349,7 @@ if authentication_status:
                 st.success("Successfully submitted")
             if max_station == 0:
                 st.error("Please, re-enter workstation")
+                max_station = 10
 
         # i là index, d là data trong mỗi hàng
         for i, d in allocation_table.iterrows():
@@ -402,7 +419,7 @@ if authentication_status:
     def generate_assembly_line(file_path, env, feasable_solution, Workstation, que, switch):
         
         workstation_data = dict(tuple(feasable_solution.groupby('Workstation')))
-        base = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
+        base = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:H')
         assembly_line = []
         tasks = {}
         job_que = {}
@@ -796,7 +813,8 @@ if authentication_status:
             self.feasable_solution = feasable_solution
             self.Workstation = Workstation
             self.data = data
-            self.file = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:G')
+            self.file = pd.read_excel(file_path,sheet_name=sheet_fw,skiprows=3,usecols='B:H')
+            self.file.drop(self.file[self.file['Preparation Stage'] == 0].index , inplace = True)
             self.unique_task = self.file['Task Number'].tolist()
             self.followers = self.data.groupby(['Next Task'])['Task Number'].count().to_dict()
         def create_clock(self):
@@ -912,7 +930,7 @@ if authentication_status:
         # create three columns
         kpi1, kpi2 , kpi3 , kpi4 , kpi5 = st.columns(5)
         # fill in those three columns with respective metrics or KPIs 
-        kpi1.metric(label='Chu kì sản xuất', value= float(cycle_time_max) , delta = "{} Minutes".format(round(float(cycle_time) - cycle_time_max , 2)))
+        kpi1.metric(label='Chu kì sản xuất', value= round(float(cycle_time_max),2) , delta = "{} Minutes".format(round(float(cycle_time) - cycle_time_max , 2)))
         kpi2.metric(label="Số trạm sản xuất", value= int((df_new['Work']).count()) , delta = "{} Workstations" .format(int((df['Task Number']).count()) - int((df_new['Work']).count())))
         kpi3.metric(label="Số sản phẩm trong 600'", value= int((600/cycle_time_max)) , delta ="{} %" .format(round(((int(600/cycle_time_max)/int(600/cycle_time)) * 100),2)))
         kpi4.metric(label="Số sản phẩm trong 60'", value= int((60/cycle_time_max)) , delta ="{} %" .format(round(((int(60/cycle_time_max)/int(60/cycle_time)) * 100),2)))  
@@ -953,19 +971,19 @@ if authentication_status:
     feasable = feasable.sort_values(by=['Task Number'])
 
     feasable = feasable.reset_index(drop = True)
-
+    print(feasable)
 
     placeholder4 = st.empty()
     with placeholder4.container():
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
             st.markdown("### 1. Biểu đồ cột thể hiện chi tiết thời gian từng trạm")
-            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
+            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number", hover_data =  ['Task Description', 'Resource'],
                 barmode = 'stack',  text_auto=True)
             st.plotly_chart(fig)
         with fig_col2:
             st.markdown("### 2. Biểu đồ cột thể hiện chi tiết các công đoạn ở mỗi trạm")
-            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number",
+            fig = px.bar(feasable, x="Workstation", y="ST (Minutes)", color="Task Number", hover_data = ['Task Description' , 'Resource'] , 
                 barmode = 'stack', text = "Task Number")
             st.plotly_chart(fig)
 
@@ -998,7 +1016,7 @@ if authentication_status:
             self.canvas.delete(self.time)
             x1_start = self.x1 + 50
             # self.time = canvas.create_text(x1_start, self.y1, font=("Arial Narrow",14,'bold'), 
-            #                             text = "Simulation Time: " + str(get_simulation_time(round(time, 1))), anchor = tk.NW,fill='#6C3400')
+            # text = "Simulation Time: " + str(get_simulation_time(round(time, 1))), anchor = tk.NW,fill='#6C3400')
 
             x2_start = x1_start + 400
             self.canvas.delete(self.ct_achieved)
