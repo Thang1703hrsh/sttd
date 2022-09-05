@@ -7,8 +7,8 @@ S_2,START,,16,0.0,1,Yes,10
 13,Viền 2 kim đỉnh nón ( Viền 2 kim thường),2 Kim,14,0.15,0,No,18
 17,Diễu 1.5 mm hông phối,1 Kim,14,0.08333333333333333,0,No,18
 S_1,START,,14,0.0,1,Yes,1
-S_7,START,,14,0.0,1,Yes,11
 S_5,START,,14,0.0,1,Yes,23
+S_7,START,,14,0.0,1,Yes,11
 18,Ráp hông phối và hông vào đỉnh ( 2 bên ),1 Kim,13,0.5555555555555556,0,No,19
 1,May cọng cước vào vành ( Cọng cước cắt đôi ở điểm giữa vành ),Ziczac,13,0.48,0,No,4
 23,Lược hông nón vào đuôi nón ( Lược theo dấu ),1 Kim,13,0.3555555555555555,0,No,22
@@ -39,4 +39,4 @@ S_6,START,,4,0.0,1,Yes,29
 29,Lược nhãn vào giữa đường 2 kim chóp,1 Kim,3,0.13333333333333333,0,No,9
 9,Diễu 1.5mm xung quanh chân nón,Trụ bước đứng,2,0.49444444444444446,0,No,33
 33,Diễu viền 2 kim 5mm thân xung quanh chóp,2 Kim,1,0.5888888888888889,0,No,38
-38,May Ziczac chặn 4 điểm ở các bên xỏ lỗ ( tham khảo mẫu ) (máy lập trình khuy-bọ),Ziczac (Lập trình),0,0.48,0,No,END
+38,May Ziczac chặn 4 điểm ở các bên xỏ lỗ ( tham khảo mẫu ) (máy lập trình khuy-bọ),Lập trình,0,0.48,0,No,END
