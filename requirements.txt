@@ -1,0 +1,12 @@
+graphviz==0.20.1
+matplotlib==3.5.1
+mplcursors==0.5.1
+networkx==2.7.1
+numpy==1.21.5
+pandas==1.4.2
+Pillow==9.2.0
+plotly==5.6.0
+pygraphviz==1.5
+simpy==4.0.1
+streamlit==1.11.1
+torch==1.12.0
